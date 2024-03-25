@@ -1,0 +1,374 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Autodesk Revit File Upgrader Online</title>
+  <meta charset="utf-8" />
+  <!-- Common packages: jQuery, Bootstrap, jsTree -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.0/clipboard.min.js"></script>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css" />
+
+  <!-- this project files -->
+  <link href="css/main.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script> 
+  <script src="js/DAConfigure.js"></script>
+  <script src="js/APSTree.js"></script>
+</head>
+
+<body>
+  <!-- Fixed navbar by Bootstrap: https://getbootstrap.com/examples/navbar-fixed-top/ -->
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <ul class="nav navbar-nav left col-lg-6">
+        <li>
+          <a href="http://developer.autodesk.com" target="_blank">
+            <img alt="Autodesk APS" src="https://cdn.autodesk.io/logo/black/simple.png" height="20">
+          </a>
+        </li>
+      </ul>
+
+
+      <ul class="nav navbar-nav right col-lg-2">
+        <li>
+            <div style="float: right; margin-top: 15px;">
+                <span style="padding-right: 5px;" data-toggle="modal" data-target="#provisionAccountModal" title="Enable my BIM 360 Account"><span
+                    class="glyphicon glyphicon-cog glyphiconTop mlink"> </span> Enable my BIM 360 Account</span>
+              </div>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav right col-lg-2">
+        <li>
+          <div style="float: right; margin-top: 15px; cursor: pointer;">
+            <span style="padding-right: 5px;" data-toggle="modal" data-target="#defineActivityModal"
+              title="Configura AppBundle & Activity">
+              <span class="glyphicon glyphicon-cog glyphiconTop mlink"></span> Configure
+            </span>
+          </div>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav right col-lg-2">
+        <div style="padding-top: 10px; text-align: right;">
+          <li>
+          <button class="btn btn-sm btn-default" id="autodeskSigninButton" hidden>Sign In &nbsp&nbsp
+            <img src="https://cdn.autodesk.io/autodesk.png" height="20"> 
+          </button>
+          <button class="btn btn-sm btn-default" id="autodeskSignOutButton" hidden>Sign Out  &nbsp&nbsp<span id="userInfo" ></span>
+          </button>
+        </li>
+        </div>
+      </ul>    
+    </div>
+  </nav>
+  <!-- End of navbar -->
+  <div class="container-fluid fill">
+    <div class="row fill">
+      <div class="col-sm-3 fill">
+          <br/>
+        <div>
+          <label><h4>Source File/Folder</h4> </label>
+        </div>
+        <div class="panel panel-default fill">
+          <div class="panel-heading" data-toggle="tooltip" style="padding: 0px;">
+            <span id="refreshSourceHubs" class="glyphicon glyphicon-refresh" style="cursor: pointer; display: none" title="Refresh list of files"></span>
+          </div>
+          <div id="sourceHubs">
+            <div style="padding-top: 100px; text-align: center;">
+              <br />
+              <br />
+              <br /> You may also need to provision your<br /> BIM 360 Docs account for this app.<br />
+              <a href="https://aps.autodesk.com/blog/bim-360-docs-provisioning-forge-apps">Learn more</a>.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 fill">
+        <div class="row">
+            <div style="padding-top: 10px; text-align: center;">
+                <h2>Revit File Upgrader Online</h2>
+            </div>
+            <br />
+          </div>
+        <div class="row ">
+          <div style="padding-top: 10px; text-align: center;">
+            <form class="bs-example bs-example-form" role="form">
+              <div class="row">
+                <div class="col-lg-6">
+                    <div style="text-align: left;">
+                        <label>Same File in Destination:</label>
+                  </div>
+                  <div class="input-group">
+                    <span class="input-group-addon">
+                      <input type="radio" name='fileExisted' value='override'>
+                    </span>
+                    <label class="form-control">Override</label>
+                    <!-- <input type="text" class="form-control"> -->
+                  </div><!-- /input-group -->
+                  <div class="input-group">
+                    <span class="input-group-addon">
+                      <input type="radio" name='fileExisted' value='skip' checked>
+                    </span>
+                    <label class="form-control">Skip</label>
+                  </div><!-- /input-group -->
+                </div>
+                <div class="col-lg-6">
+                    <div style="text-align: left;">
+                        <label> Upgrade To: </label>
+                  </div>
+                  <div class="input-group">
+                      <span class="input-group-addon">
+                        <input type="radio" name='upgradeToVersion' value='2023' checked>
+                      </span>
+                      <label class="form-control">Revit 2023</label>
+                    </div><!-- /input-group -->
+                    <div class="input-group">
+                    <span class="input-group-addon">
+                      <input type="radio" name='upgradeToVersion' value='2022' >
+                    </span>
+                    <label class="form-control">Revit 2022</label>
+                  </div><!-- /input-group -->
+                </div>
+
+              </div><!-- /.row -->
+
+              <br />
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="input-group">
+                    <span class="input-group-addon">
+                      <input type="checkbox" id='supportRvtCbx' checked=true>
+                    </span>
+                    <label class="form-control">RVT</label>
+                  </div><!-- /input-group -->
+                </div>
+
+                <div class="col-lg-4">
+                  <div class="input-group">
+                    <span class="input-group-addon">
+                      <input type="checkbox" id='supportRfaCbx' checked=true>
+                    </span>
+                    <label class="form-control">RFA</label>
+                  </div><!-- /input-group -->
+                </div>
+                <div class="col-lg-4">
+                  <div class="input-group">
+                    <span class="input-group-addon">
+                      <input type="checkbox" id='supportRteCbx' checked=true>
+                    </span>
+                    <label class="form-control">RTE</label>
+                  </div><!-- /input-group -->
+                </div>
+              </div><!-- /.row -->
+            </form>
+            <!-- </div> -->
+            <br />
+            <br />
+            <div class="btn-group btn-group-lg">
+              <button class="btn btn-lg btn-default" id="upgradeBtn">
+                <span class="glyphicon glyphicon-play"></span>Upgrade
+              </button>
+            </div>
+            <br />
+          </div>
+        </div>
+
+        <div class="row">
+          <div style="padding-top: 10px; text-align: left;">
+            <label id="upgradeTitle">
+              <h4>Progress</h4>
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <div style="padding-top: 10px; overflow:auto; text-align: left;">
+              <div class="list-group" id="logStatus">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-3 fill">
+        <br/>
+          <div>
+              <label><h4>Destination Folder</h4> </label>
+            </div>
+         <div class="panel panel-default fill">
+          <div class="panel-heading" data-toggle="tooltip" style="padding: 0px;">
+            <span id="refreshDestinationHubs" class="glyphicon glyphicon-refresh" style="cursor: pointer; display: none"
+              title="Refresh list of files"></span>
+          </div>
+
+          <div id="destinationHubs">
+            <div style="padding-top: 100px; text-align: center;">
+              <br />
+              <br />
+              <br /> You may also need to provision your<br /> BIM 360 Docs account for this app.<br />
+              <a href="https://aps.autodesk.com/blog/bim-360-docs-provisioning-forge-apps">Learn more</a>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+      <!-- Modal Define AppBundle & Activity -->
+      <div class="modal fade" id="defineActivityModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Cancel"><span
+                  aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">AppBundle & Activity</h4>
+            </div>
+            <div class="modal-body">
+              <div class="alert alert-warning">
+                <center>Define AppBundle &amp; Activity only once.<br />Redefine only when your plugin code change
+                  (creates a new version).</center>
+              </div>
+              <div class="form-group">
+                <label for="localBundles">Select a local AppBundle:</label>
+                <select class="form-control" id="localBundles"> </select>
+                <b>Tip:</b> Make sure .ZIP bundles are placed at <b>/bundles/</b> folder
+              </div>
+              <div class="form-group">
+                <label for="engines">Select engine (Versions 2023 is supported):</label>
+                <select class="form-control" id="engines"> </select>
+              </div>
+              For this sample the .ZIP name is used as suffix to define <b>AppBundle</b> and <b>Activity</b>
+              names. Activities will have the following parameters: <br>
+              &nbsp&nbsp&nbsp&nbsp<b>rvtFile:</b> Input Revit model <br>
+              &nbsp&nbsp&nbsp&nbsp<b>resultrvt:</b> Output upgraded revit Rvt file <br>
+              &nbsp&nbsp&nbsp&nbsp<b>resultrfa:</b> Output upgraded revit Rfa file <br>
+              &nbsp&nbsp&nbsp&nbsp<b>resultrte:</b> Output upgraded revit Rte file <br>
+              <div style="text-align: left;">
+                <label id="configText">
+                  <h4>Status</h4>
+                </label>
+              </div>
+              <div>
+                <div class="progress progress-striped active">
+                  <div id='configProgressBar' width=90% class="progress-bar progress-bar-success" role="progressbar"
+                    aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                    <span class="sr-only">40% 完成</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" id="createAppBundleActivity">Create/Update</button>
+              <button class="btn btn-danger" id="clearAccount">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- Modal Provision BIM360  -->
+    <div class="modal fade" id="provisionAccountModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Cancel">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">Thanks for using this sample!</h4>
+          </div>
+          <div class="modal-body">
+            <p>To view your BIM 360 Docs files on this app please authorize my APS Client ID with your BIM 360 Docs
+              Account.
+            </p>
+            <p>
+              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#provisionAccountStepsModal">
+                Show me the steps
+                <span class="glyphicon glyphicon-new-window"></span>
+              </button>
+            </p>
+            Use this as APS Client ID:
+            <div class="input-group">
+              <input type="text" readonly="true" aria-describedby="CopyClientID" id="ClientID" class="form-control" value="" />
+              <span class="input-group-addon" style="cursor: pointer" data-clipboard-target="#ClientID" id="CopyClientID">Copy
+                to clipboard</span>
+            </div>
+            And this App Name:
+            <div class="input-group">
+              <input type="text" readonly="true" aria-describedby="CopyAppName" id="AppName" class="form-control" value="Revit File Upgrader Sample" />
+              <span class="input-group-addon" style="cursor: pointer" data-clipboard-target="#AppName" id="CopyAppName">Copy
+                to clipboard</span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="provisionAccountSave">Done</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Provision BIM360 Help  -->
+    <div class="modal fade" id="provisionAccountStepsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Cancel">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel1">Step-by-step guide</h4>
+          </div>
+          <div class="modal-body">
+            <p>To access your BIM 360 Docs files with this app, you need to connect your BIM 360 account with the app.</p>
+            <ol>
+              <li>Log in to
+                <a href="https://bim360enterprise.autodesk.com/" target="_blank">BIM 360 Account Administration
+                </a>. Note that you need account administrator permissions.
+              </li>
+              <li>If you have more than one account, select the account you want to integrate with the app.</li>
+              <li>From the toolbar, select
+                <strong>SETTINGS &gt; Apps &amp; Integrations</strong>.
+                <br />
+                <img src="./res/Step1.png" width="500" />
+              </li>
+              <li>Click the
+                <strong>Add Integration</strong> button.
+                <br />
+                <img src="./res/Step2.png" />
+              </li>
+              <li>Select
+                <strong>BIM 360 Account Administration</strong> and
+                <strong>BIM 360 Docs</strong>, and click
+                <strong>Next</strong>.
+              </li>
+              <li>Select
+                <strong>I’m the developer</strong>, and click
+                <strong>Next</strong>.</li>
+              <li>In the
+                <strong>APS Client ID</strong> and
+                <strong>App Name</strong> fields, enter the APS client ID and app name provided by the app retailer.
+              </li>
+              <li>Select the
+                <strong>I have saved the Account ID information securely</strong> checkbox.</li>
+              <li>Click
+                <strong>Save</strong>.<br />
+                <img src="./res/Step3.png" width="500" />
+              </li>
+              <p></p>
+              <p>Congratulations! You can now access your BIM 360 Docs files.</p>
+            </ol>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Understood, thanks!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+        new Clipboard('.input-group-addon');
+      </script>
+
+
+</body>
+<iframe id="hiddenFrame" style="visibility: hidden; display: none" />
+</html>

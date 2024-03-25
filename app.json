@@ -1,0 +1,41 @@
+{
+    "name": "aps-upgrade-revit-files",
+    "description": "This sample demostrated how to upgrade Revit project/family/template to the latest version using Design Automation for Revit API, including upgrade one file or one folder.",
+    "repository": "https://github.com/Autodesk-Platform-Services/aps-upgrade-revit-files",
+    "logo": "https://cdn.autodesk.io/favicon.ico",
+    "keywords": [
+        "autodesk",
+        "aps",
+        "design automation"        
+    ],
+    "env": {
+        "APS_CLIENT_ID": {
+            "description": "APS Client ID"
+        },
+        "APS_CLIENT_SECRET": {
+            "description": "APS Client Secret"
+        },
+        "APS_CALLBACK_URL": {
+            "description": "Callback URL of your APS app, required for 3-legged OAuth",
+            "value": "https://<<YOUR HEROKU APP NAME HERE>>.herokuapp.com/api/aps/callback/oauth"
+        },
+        "APS_WEBHOOK_URL": {
+            "description": "Callback URL of your webhook",
+            "value": "http://<<YOUR HEROKU APP NAME HERE>>.herokuapp.com/api/aps/callback/designautomation"
+        },
+        "DESIGN_AUTOMATION_NICKNAME": {
+            "description": "Revit Design Automation NickName, APS_CLIENT_ID by default",
+            "value": "<<YOUR APS_CLIENT_ID HERE>>"
+        },
+        "DESIGN_AUTOMATION_ACTIVITY_NAME": {
+            "description": "Revit Design Automation Activity Name",
+            "value": "FileUpgraderAppActivity"
+        },
+        "DESIGN_AUTOMATION_ACTIVITY_ALIAS": {
+            "description": "Revit Design Automation Activity Alias",
+            "value": "dev"
+        }        
+    },
+    "website": "https://developer.autodesk.com/",
+    "success_url": "/"
+}
