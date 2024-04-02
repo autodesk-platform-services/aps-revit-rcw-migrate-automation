@@ -8,8 +8,8 @@
     <ProjectGuid>{3F845775-4EAB-4F4C-B33C-2C1E27AB78F4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ADNPlugin.Revit.FileUpgrader</RootNamespace>
-    <AssemblyName>FileUpgrader</AssemblyName>
+    <RootNamespace>ADNPlugin.Revit.RCWMigrator</RootNamespace>
+    <AssemblyName>RCWMigrator</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -57,12 +57,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DesignAutomationBridge, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Autodesk.Forge.DesignAutomation.Revit.2023.0.2\lib\net48\DesignAutomationBridge.dll</HintPath>
+      <HintPath>packages\Autodesk.Forge.DesignAutomation.Revit.2024.0.2\lib\net48\DesignAutomationBridge.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="RevitAPI">
-      <HintPath>C:\Program Files\Autodesk\Revit 2023\RevitAPI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2024\RevitAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -103,18 +108,18 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="FileUpgraderApp.bundle\Contents\FileUpgrader.addin" />
-    <Content Include="FileUpgraderApp.bundle\Contents\FileUpgrader.dll" />
-    <Content Include="FileUpgraderApp.bundle\PackageContents.xml" />
+    <Content Include="RCWMigratorApp.bundle\Contents\RCWMigrator.addin" />
+    <Content Include="RCWMigratorApp.bundle\Contents\FileUpgrader.dll" />
+    <Content Include="RCWMigratorApp.bundle\PackageContents.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-xcopy /Y /F "$(ProjectDir)FileUpgraderApp.bundle\Contents\FileUpgrader.addin" "$(AppData)\Autodesk\REVIT\Addins\2023"
-xcopy /Y /F "$(ProjectDir)bin\Debug\FileUpgrader.dll" "$(AppData)\Autodesk\REVIT\Addins\2023”
-xcopy /Y /F "$(TargetDir)*.dll" "$(ProjectDir)FileUpgraderApp.bundle\Contents\"
-del /F "$(ProjectDir)..\..\..\public\bundles\FileUpgraderApp.zip"
-"C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../../../public/bundles/FileUpgraderApp.zip" "$(ProjectDir)FileUpgraderApp.bundle\" -xr0!*.pdb
+xcopy /Y /F "$(ProjectDir)RCWMigratorApp.bundle\Contents\RCWMigrator.addin" "$(AppData)\Autodesk\REVIT\Addins\2023"
+xcopy /Y /F "$(ProjectDir)bin\Debug\RCWMigrator.dll" "$(AppData)\Autodesk\REVIT\Addins\2023”
+xcopy /Y /F "$(TargetDir)*.dll" "$(ProjectDir)RCWMigratorApp.bundle\Contents\"
+del /F "$(ProjectDir)..\..\..\public\bundles\RCWMigratorApp.zip"
+"C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../../../public/bundles/RCWMigratorApp.zip" "$(ProjectDir)RCWMigratorApp.bundle\" -xr0!*.pdb
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
