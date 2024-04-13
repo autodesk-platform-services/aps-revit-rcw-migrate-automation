@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ApplicationPackage>
-  <Components Description="File upgrade app">
+  <Components Description="Revit Cloud Model Migrate app">
     <RuntimeRequirements OS="Win64"
                          Platform="Revit"
-                         SeriesMin="R2021"
-                         SeriesMax="R2024" />
-    <ComponentEntry AppName="FileUgrader"
+                         SeriesMin="R2025"
+                         SeriesMax="R2025" />
+    <ComponentEntry AppName="RCWMigrator"
                     Version="1.0.0"
                     ModuleName="./Contents/RCWMigrator.addin"
-                    AppDescription="Upgrade Revit files to latest version"
+                    AppDescription="Migrate Revit Cloud Model to Another Project"
                     LoadOnCommandInvocation="False"
                     LoadOnRevitStartup="True" />
   </Components>

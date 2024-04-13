@@ -29,37 +29,26 @@ using Autodesk.Revit.ApplicationServices;
 using DesignAutomationFramework;
 using Newtonsoft.Json;
 
-namespace ADNPlugin.Revit.RCWMigrator
+namespace APS.Revit.RCWMigrator
 {
-    internal class RuntimeValue
-    {
-        // Change this to true when publishing to Revit IO cloud
-        public static bool RunOnCloud { get; } = true;
-    }
-
 
     [Autodesk.Revit.Attributes.Regeneration(Autodesk.Revit.Attributes.RegenerationOption.Manual)]
     [Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
-    public class FileUpgradeApp : IExternalDBApplication
+    public class RCWMigratorApp : IExternalDBApplication
     {
         public ExternalDBApplicationResult OnStartup(ControlledApplication application)
         {
-            if (RuntimeValue.RunOnCloud)
-            {
-                DesignAutomationBridge.DesignAutomationReadyEvent += HandleDesignAutomationReadyEvent;
-            }
-
+            DesignAutomationBridge.DesignAutomationReadyEvent += HandleDesignAutomationReadyEvent;
             return ExternalDBApplicationResult.Succeeded;
         }
 
         public void HandleDesignAutomationReadyEvent( object sender, DesignAutomationReadyEventArgs e)
         {
             e.Succeeded = true;
-            UpgradeFile(e.DesignAutomationData);
+            MigrateRCW(e.DesignAutomationData);
         }
 
-
-        protected void UpgradeFile( DesignAutomationData data )
+        protected void MigrateRCW( DesignAutomationData data )
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
@@ -73,19 +62,23 @@ namespace ADNPlugin.Revit.RCWMigrator
                 throw new InvalidDataException("Cannot parse out input parameters correctly.");
 
             Console.WriteLine("Got the input json file sucessfully.");
-
             var cloudModelPath = ModelPathUtils.ConvertCloudGUIDsToCloudPath(ModelPathUtils.CloudRegionUS, inputParams.ProjectGuid, inputParams.ModelGuid);
-            //rvtApp.FailuresProcessing += OnFailuresProcessing;
-
             Console.WriteLine("Revit starts openning Revit Cloud Model");
+
             Document doc = rvtApp.OpenDocumentFile(cloudModelPath, new OpenOptions());
             if (doc == null)
                 throw new InvalidOperationException("Could not open Revit Cloud Model.");
 
             Console.WriteLine("Revit Cloud Model is opened");
-
-
-            doc.SaveAsCloudModel(inputParams.TargetAccountGuid, inputParams.TargetProjectGuid, inputParams.TargetFolderUrn, inputParams.TargetModelName);
+            try
+            {
+                // Reminder: the API does not support if the current model is already a Revit Cloud Model, discussing with Revit team for improvement.
+                doc.SaveAsCloudModel(inputParams.TargetAccountGuid, inputParams.TargetProjectGuid, inputParams.TargetFolderUrn, inputParams.TargetModelName);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Failed to save cloud model due to: "+ ex.Message);
+            }
         }
 
 
@@ -100,32 +93,30 @@ namespace ADNPlugin.Revit.RCWMigrator
         /// </summary>
         internal class InputParams
         {
+            // source revit cloud model
             public string Region { get; set; } = ModelPathUtils.CloudRegionUS;
             [JsonProperty(PropertyName = "projectGuid", Required = Required.Default)]
             public Guid ProjectGuid { get; set; }
             [JsonProperty(PropertyName = "modelGuid", Required = Required.Default)]
             public Guid ModelGuid { get; set; }
 
+            // target location of revit cloud model
             [JsonProperty(PropertyName = "TargetAccountGuid", Required = Required.Default)]
             public Guid TargetAccountGuid { get; set; }
-
             [JsonProperty(PropertyName = "TargetProjectGuid", Required = Required.Default)]
             public Guid TargetProjectGuid { get; set; }
-
             [JsonProperty(PropertyName = "TargetFolderUrn", Required = Required.Default)]
             public string TargetFolderUrn { get; set; }
-
-
             [JsonProperty(PropertyName = "TargetModelName", Required = Required.Default)]
             public string TargetModelName { get; set; }
-
 
             static public InputParams Parse(string jsonPath)
             {
                 try
                 {
                     if (!File.Exists(jsonPath))
-                        return new InputParams { Region = ModelPathUtils.CloudRegionUS, ProjectGuid = new Guid(""), ModelGuid = new Guid("") };
+                        return new InputParams { Region = ModelPathUtils.CloudRegionUS, ProjectGuid = new Guid(""), ModelGuid = new Guid(""), 
+                            TargetAccountGuid = new Guid(""), TargetProjectGuid = new Guid(""), TargetFolderUrn = "", TargetModelName = "" };
 
                     string jsonContents = File.ReadAllText(jsonPath);
                     return JsonConvert.DeserializeObject<InputParams>(jsonContents);
