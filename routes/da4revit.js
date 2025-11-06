@@ -234,8 +234,7 @@ router.post('/callback/designautomation', async (req, res, next) => {
             return;
         }
         let index = workitemList.indexOf(workitem);
-        // workitemStatus.Status = 'Success';
-        workitemStatus.status = 'Completed';
+        workitemStatus.Status = 'Completed';
         global.MyApp.SocketIo.emit(SOCKET_TOPIC_WORKITEM, workitemStatus);
         workitemList.splice(index, 1);
 

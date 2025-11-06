@@ -22,10 +22,6 @@ const cookieSession = require('cookie-session');
 
 const PORT = process.env.PORT || 3000;
 const config = require('./config');
-if (config.credentials.client_id == null || config.credentials.client_secret == null) {
-    console.error('Missing APS_CLIENT_ID or APS_CLIENT_SECRET env. variables.');
-    return;
-}
 
 if (!String.prototype.format) {
     String.prototype.format = function () {

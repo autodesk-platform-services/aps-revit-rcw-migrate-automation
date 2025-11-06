@@ -26,13 +26,11 @@ class OAuth {
     }
 
     getClient(scopes = config.scopes.internal) {
-        const { client_id, client_secret, callback_url } = config.credentials;
-        return new AuthClientThreeLeggedV2(client_id, client_secret, callback_url, scopes);
+        return new AuthClientThreeLeggedV2(config.APS_CLIENT_ID, config.APS_CLIENT_SECRET, config.APS_CALLBACK_URL, scopes);
     }
 
     get2LeggedClient(scopes = config.scopes.internal_2legged){
-        const { client_id, client_secret } = config.credentials;
-        return new AuthClientTwoLeggedV2(client_id, client_secret, scopes );
+        return new AuthClientTwoLeggedV2(config.APS_CLIENT_ID, config.APS_CLIENT_SECRET, scopes );
     }
 
     isAuthorized() {
