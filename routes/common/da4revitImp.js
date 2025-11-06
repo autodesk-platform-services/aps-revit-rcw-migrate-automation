@@ -139,11 +139,15 @@ function cancelWorkitem(workItemId, access_token) {
 ///
 ///
 ///////////////////////////////////////////////////////////////////////
-function upgradeFile(inputUrl, outputUrl, projectId, createVersionData, fileExtension, access_token_3Legged, access_token_2Legged) {
+function upgradeFile(inputUrl, inputJson,  access_token_3Legged, access_token_2Legged) {
 
     return new Promise(function (resolve, reject) {
 
-        const workitemBody = createPostWorkitemBody(inputUrl, outputUrl, fileExtension, access_token_3Legged.access_token);
+
+
+
+
+        const workitemBody = createPostWorkitemBody(inputUrl, inputJson, access_token_3Legged.access_token);
         if( workitemBody === null){
             reject('workitem request body is null');
         }
@@ -171,10 +175,7 @@ function upgradeFile(inputUrl, outputUrl, projectId, createVersionData, fileExte
                     resp = body
                 }
                 workitemList.push({
-                    workitemId: resp.id,
-                    projectId: projectId,
-                    createVersionData: createVersionData,
-                    access_token_3Legged: access_token_3Legged
+                    workitemId: resp.id
                 })
 
                 if (response.statusCode >= 400) {
@@ -197,7 +198,152 @@ function upgradeFile(inputUrl, outputUrl, projectId, createVersionData, fileExte
 
 
 
+///////////////////////////////////////////////////////////////////////
+///
+///
+///////////////////////////////////////////////////////////////////////
+async function migrateRCW( requestBody, access_token_3Legged, access_token_2Legged) {
 
+    return new Promise(async function (resolve, reject) {
+        try {
+            // Extract source file URL and target model info from requestBody
+            const sourceFileUrl = requestBody.sourceFileUrl;
+            const targetModel = requestBody.targetModel;
+            
+            if (!sourceFileUrl) {
+                reject(new Error('sourceFileUrl is required in requestBody'));
+                return;
+            }
+
+            // Create params.json content with target cloud model info
+            // The file path will be automatically detected by the plugin from the rvtFile argument
+            // In Design Automation, the file is downloaded to a local path accessible via $(args[rvtFile].path)
+            // The plugin will use a default path or detect the file automatically
+            const paramsJson = {
+                InputFilePath: "input.rvt", // Default path - Design Automation will download rvtFile to this location or plugin will auto-detect
+                TargetAccountGuid: targetModel.accountGuid || "",
+                TargetProjectGuid: targetModel.projectGuid || "",
+                TargetFolderUrn: targetModel.folderUrn || "",
+                TargetModelName: targetModel.modelName || ""
+            };
+
+            // Upload params.json to OSS storage and get download URL
+            const paramsJsonContent = JSON.stringify(paramsJson);
+            const paramsStorage = await createTemporaryStorage(paramsJsonContent, access_token_3Legged);
+            if (!paramsStorage || !paramsStorage.downloadUrl) {
+                reject(new Error('Failed to create storage for params.json'));
+                return;
+            }
+
+            // Create workitem body with rvtFile and inputParams
+            const workitemBody = {
+                activityId:  designAutomation.nickname + '.'+designAutomation.activity_name+'+'+designAutomation.appbundle_activity_alias,
+                arguments: {
+                    rvtFile: {
+                        verb: "get",
+                        url: sourceFileUrl,
+                        Headers: {
+                            Authorization: 'Bearer ' + access_token_3Legged.access_token
+                        }
+                    },
+                    inputParams: {
+                        verb: "get",
+                        url: paramsStorage.downloadUrl,
+                        Headers: {
+                            Authorization: 'Bearer ' + access_token_3Legged.access_token
+                        }
+                    },
+                    onComplete: {
+                        verb: "post",
+                        url: designAutomation.webhook_url
+                    }
+                }
+            };
+ 
+            var options = {
+                method: 'POST',
+                url: designAutomation.endpoint+'workitems',
+                headers: {
+                    Authorization: 'Bearer ' + access_token_2Legged.access_token,
+                    'Content-Type': 'application/json'
+                },
+                body: workitemBody,
+                json: true
+            };
+            console.log(options);
+
+            request(options, function (error, response, body) {
+                if (error) {
+                    reject(error);
+                } else {
+                    let resp;
+                    try {
+                        resp = JSON.parse(body)
+                    } catch (e) {
+                        resp = body
+                    }
+                    
+                    const projectId = targetModel.projectGuid || "";
+                    workitemList.push({
+                        workitemId: resp.id,
+                        projectId: projectId
+                    })
+
+                    if (response.statusCode >= 400) {
+                        console.log('error code: ' + response.statusCode + ' response message: ' + response.statusMessage);
+                        reject({
+                            statusCode: response.statusCode,
+                            statusMessage: response.statusMessage
+                        });
+                    } else {
+                        resolve({
+                            statusCode: response.statusCode,
+                            headers: response.headers,
+                            body: resp
+                        });
+                    }
+                }
+            });
+        } catch (err) {
+            reject(err);
+        }
+    })
+}
+
+// Helper function to create temporary storage for params.json
+async function createTemporaryStorage(content, access_token) {
+    return new Promise(function (resolve, reject) {
+        const BucketsApi = require('forge-apis').BucketsApi;
+        const bucketsApi = new BucketsApi();
+        
+        // Use a temporary bucket or create one
+        const bucketKey = AUTODESK_HUB_BUCKET_KEY;
+        const objectName = 'params_' + Date.now() + '.json';
+        
+        // Upload to OSS
+        const options = {
+            method: 'PUT',
+            url: `https://developer.api.autodesk.com/oss/v2/buckets/${bucketKey}/objects/${objectName}`,
+            headers: {
+                Authorization: 'Bearer ' + access_token.access_token,
+                'Content-Type': 'application/json'
+            },
+            body: content
+        };
+
+        request(options, function (error, response, body) {
+            if (error) {
+                reject(error);
+            } else if (response.statusCode >= 400) {
+                reject(new Error('Failed to upload params.json: ' + response.statusMessage));
+            } else {
+                // Get signed download URL
+                const downloadUrl = `https://developer.api.autodesk.com/oss/v2/buckets/${bucketKey}/objects/${encodeURIComponent(objectName)}`;
+                resolve({ downloadUrl: downloadUrl });
+            }
+        });
+    });
+}
 ///////////////////////////////////////////////////////////////////////
 ///
 ///
@@ -391,83 +537,29 @@ function createBodyOfPostVersion(fileId, fileName, storageId, versionType) {
 ///
 ///
 ///////////////////////////////////////////////////////////////////////
-function createPostWorkitemBody(inputUrl, outputUrl, fileExtension, access_token) {
+function createPostWorkitemBody(inputUrl, inputJson, access_token) {
 
     let body = null;
-    switch (fileExtension) {
-        case 'rvt':
-            body = {
-                activityId:  designAutomation.nickname + '.'+designAutomation.activity_name+'+'+designAutomation.appbundle_activity_alias,
-                arguments: {
-                    rvtFile: {
-                        url: inputUrl,
-                        Headers: {
-                            Authorization: 'Bearer ' + access_token
-                        },
-                    },
-                    resultrvt: {
-                        verb: 'put',
-                        url: outputUrl,
-                        Headers: {
-                            Authorization: 'Bearer ' + access_token
-                        },
-                    },
-                    onComplete: {
-                        verb: "post",
-                        url: designAutomation.webhook_url
-                    }
-                }
-            };
-            break;
-        case 'rfa':
-            body = {
-                activityId:  designAutomation.nickname + '.'+designAutomation.activity_name+'+'+designAutomation.appbundle_activity_alias,
-                arguments: {
-                    rvtFile: {
-                        url: inputUrl,
-                        Headers: {
-                            Authorization: 'Bearer ' + access_token
-                        },
-                    },
-                    resultrfa: {
-                        verb: 'put',
-                        url: outputUrl,
-                        Headers: {
-                            Authorization: 'Bearer ' + access_token
-                        },
-                    },
-                    onComplete: {
-                        verb: "post",
-                        url: designAutomation.webhook_url
-                    }
-                }
-            };
-            break;
-        case 'rte':
-            body = {
-                activityId:  designAutomation.nickname + '.'+designAutomation.activity_name+'+'+designAutomation.appbundle_activity_alias,
-                arguments: {
-                    rvtFile: {
-                        url: inputUrl,
-                        Headers: {
-                            Authorization: 'Bearer ' + access_token
-                        },
-                    },
-                    resultrte: {
-                        verb: 'put',
-                        url: outputUrl,
-                        Headers: {
-                            Authorization: 'Bearer ' + access_token
-                        },
-                    },
-                    onComplete: {
-                        verb: "post",
-                        url: designAutomation.webhook_url
-                    }
-                }
-            };
-            break;
-    }
+    body = {
+        activityId:  designAutomation.nickname + '.'+designAutomation.activity_name+'+'+designAutomation.appbundle_activity_alias,
+        arguments: {
+            rvtFile: {
+                url: inputUrl,
+                Headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+            },
+            inputParams: {
+                url: "data:application/json," + JSON.stringify(inputJson)
+            },
+            onComplete: {
+                verb: "post",
+                url: designAutomation.webhook_url
+            },
+            adsk3LeggedToken: access_token
+        }
+    };
+
     return body;
 }
 

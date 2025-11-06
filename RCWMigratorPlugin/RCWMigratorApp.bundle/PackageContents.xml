@@ -4,7 +4,7 @@
     <RuntimeRequirements OS="Win64"
                          Platform="Revit"
                          SeriesMin="R2025"
-                         SeriesMax="R2025" />
+                         SeriesMax="R2026" />
     <ComponentEntry AppName="RCWMigrator"
                     Version="1.0.0"
                     ModuleName="./Contents/RCWMigrator.addin"

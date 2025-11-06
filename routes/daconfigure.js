@@ -64,7 +64,7 @@ router.get('/designautomation/engines', async(req, res, next) => {
         }
 
         const engineList = Allengines.filter( (engine ) => {
-            return (engine.indexOf('Revit+2023') >= 0)
+            return (engine.indexOf('Revit') >= 0)
         }).sort((a, b) => (a > b ? -1 : 1));
         res.status(200).end(JSON.stringify(engineList));
     } catch (err) {
@@ -213,6 +213,7 @@ router.post('/designautomation/activities', async( req, res, next) => {
     const qualifiedAppBundleId = designAutomation.nickname + '.' + appBundleName + '+' + designAutomation.appbundle_activity_alias;
     const qualifiedActivityId  = designAutomation.nickname + '.' + activityName + '+' + designAutomation.appbundle_activity_alias;
     if( !activities.includes( qualifiedActivityId ) ){
+        
         const activitySpec = {
             Id : activityName,
             Appbundles : [ qualifiedAppBundleId ],
@@ -222,28 +223,20 @@ router.post('/designautomation/activities', async( req, res, next) => {
             {
                 rvtFile: {
                     verb: "get",
-                    description: "Input Revit model",
-                    required: true
+                    description: "Input Revit model file (downloaded from URL)",
+                    required: false
                 },
-                resultrvt: {
-                    verb: "put",
-                    description: "upgraded revit Rvt file",
-                    localName: "revitupgrade.rvt"
-                },
-                resultrfa: {
-                    verb: "put",
-                    description: "upgraded revit Rfa file",
-                    localName: "revitupgrade.rfa"
-                },
-                resultrte: {
-                    verb: "put",
-                    description: "upgraded revit Rte file",
-                    localName: "revitupgrade.rte"
+                inputParams: {
+                    verb: "get",
+                    description: "Input parameters JSON file including location of the target cloud model",
+                    localName: "params.json",
+                    required: false
                 }
             }
-        }
+        };
+
         try{
-            newActivity = await apiClientCallAsync( 'POST',  designAutomation.URL.ACTIVITIES_URL, req.oauth_token.access_token, activitySpec );
+            const newActivity = await apiClientCallAsync( 'POST',  designAutomation.URL.ACTIVITIES_URL, req.oauth_token.access_token, activitySpec );
             const aliasSpec = {
                 "Id" : designAutomation.appbundle_activity_alias,
                 "Version" : 1

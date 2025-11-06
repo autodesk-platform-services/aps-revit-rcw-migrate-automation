@@ -33,7 +33,7 @@ $(document).ready(function () {
       // prepare sign out
       $('#autodeskSignOutButton').click(function () {
         $('#hiddenFrame').on('load', function (event) {
-          location.href = '/api/aps/oauth/v1/signout';
+          location.href = '/api/aps/api/auth/logout';
         });
         $('#hiddenFrame').attr('src', 'https://accounts.autodesk.com/Authentication/LogOut');
       })
@@ -563,7 +563,7 @@ function addGroupListItem(itemText, statusStr, itemType, itemStyle, itemId) {
 
 function showUser() {
   jQuery.ajax({
-    url: '/api/aps/user/v1/profile',
+    url: '/api/aps/api/auth/profile',
     success: function (profile) {
       var img = '<img src="' + profile.picture + '" height="20px">';
       $('#userInfo').html(img + profile.name);

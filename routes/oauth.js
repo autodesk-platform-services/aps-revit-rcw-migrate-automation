@@ -17,6 +17,7 @@
 /////////////////////////////////////////////////////////////////////
 
 const express = require('express');
+const { getAuthorizationUrl, authCallbackMiddleware, authRefreshMiddleware, getUserProfile, getTwoLeggedToken, getClientId } = require('./common/aps.js');
 
 const config = require('../config');
 const { OAuth } = require('./common/oauthImp');
@@ -35,9 +36,13 @@ router.get('/callback/oauth', async (req, res, next) => {
 });
 
 router.get('/oauth/v1/clientid', (req, res) =>{
-    res.status(200).end( JSON.stringify({id : config.credentials.client_id}) );
+    res.status(200).end( JSON.stringify({id : getClientId()}) );
 });
 
+
+// router.get('/api/auth/login', function (req, res) {
+//     res.end(getAuthorizationUrl());
+// });
 
 router.get('/oauth/v1/url', (req, res) => {
     const url =
@@ -49,12 +54,11 @@ router.get('/oauth/v1/url', (req, res) => {
     res.end(url);
 });
 
-router.get('/oauth/v1/signout', (req, res) => {
+router.get('/api/auth/logout', function (req, res) {
     req.session = null;
     res.redirect('/');
 });
 
-// Endpoint to return a 2-legged access token
 router.get('/oauth/v1/token', async (req, res, next) => {
     const oauth = new OAuth(req.session);
     if (!oauth.isAuthorized()) {
@@ -71,5 +75,25 @@ router.get('/oauth/v1/token', async (req, res, next) => {
         return;
     }
 });
+
+// router.get('/oauth/v1/token', async (req, res, next) => {
+//     try {
+//         const credentials = await getTwoLeggedToken();
+//         res.json(credentials);
+//     } catch(err) {
+//         console.error('Error getting 2-legged token:', err);
+//         res.status(500).end();
+//     }
+// });
+
+
+// router.get('/api/auth/profile', authRefreshMiddleware, async function (req, res, next) {
+//     try {
+//         const profile = await getUserProfile(req.oAuthToken);
+//         res.json({ name: `${profile.name}` });
+//     } catch (err) {
+//         next(err);
+//     }
+// });
 
 module.exports = router;

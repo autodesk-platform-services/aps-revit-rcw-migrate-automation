@@ -157,14 +157,18 @@ async function getFolderContents(projectId, folderId, oauthClient, credentials, 
     const contents = await folders.getFolderContents(projectId, folderId, {}, oauthClient, credentials);
     const treeNodes = contents.body.data.map((item) => {
         var name = (item.attributes.displayName !== null ? item.attributes.displayName : item.attributes.name);
-        if (name !== '') { // BIM 360 Items with no displayName also don't have storage, so not file to transfer
+        // only RCM models
+        if (name == '' ) { // BIM 360 Items with no displayName also don't have storage, so not file to transfer
+            return null;
+        } 
+        if(item.attributes.extension.type == "items:autodesk.bim360:C4RModel" || item.attributes.extension.type == "items:autodesk.bim360.file" || item.attributes.extension.type == "folders:autodesk.bim360:Folder" ){
             return createTreeNode(
                 item.links.self.href,
                 name,
                 item.type,
                 true
             );
-        } else {
+        }else{
             return null;
         }
     });
