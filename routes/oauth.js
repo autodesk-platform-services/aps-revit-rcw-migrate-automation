@@ -19,7 +19,7 @@
 const express = require('express');
 const { getAuthorizationUrl, authCallbackMiddleware, authRefreshMiddleware, getUserProfile, getTwoLeggedToken, getClientId } = require('./common/aps.js');
 
-const config = require('../config');
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, APS_WEBHOOK_URL, scopes } = require('../config');
 const { OAuth } = require('./common/oauthImp');
 
 let router = express.Router();
@@ -48,9 +48,9 @@ router.get('/oauth/v1/url', (req, res) => {
     const url =
         'https://developer.api.autodesk.com' +
         '/authentication/v2/authorize?response_type=code' +
-        '&client_id=' + config.credentials.client_id +
-        '&redirect_uri=' + config.credentials.callback_url +
-        '&scope=' + config.scopes.internal.join(' ');
+        '&client_id=' + APS_CLIENT_ID +
+        '&redirect_uri=' + APS_CALLBACK_URL +
+        '&scope=' + scopes.internal.join(' ');
     res.end(url);
 });
 
