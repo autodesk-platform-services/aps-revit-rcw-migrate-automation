@@ -35,7 +35,7 @@ if (!String.prototype.format) {
     };
 }
 var app = express();
-app.use(express.static('public'));
+app.use(express.static('wwwroot'));
 app.use(cookieSession({secret: SERVER_SESSION_SECRET, maxAge: 14 * 24 * 60 * 60 * 1000 }));
 app.use(express.json({ limit: '50mb' }));
 
