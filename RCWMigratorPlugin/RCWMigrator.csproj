@@ -62,8 +62,8 @@
     <PostBuildEvent>xcopy /Y /F "$(ProjectDir)..\..\..\RCWMigratorApp.bundle\Contents\RCWMigrator.addin" "$(AppData)\Autodesk\REVIT\Addins\2025"
 xcopy /Y /F "$(ProjectDir)$(OutputPath)RCWMigrator.dll" "$(AppData)\Autodesk\REVIT\Addins\2025"
 xcopy /Y /F "$(TargetDir)*.dll" "$(ProjectDir)..\..\..\RCWMigratorApp.bundle\Contents\"
-del /F "$(ProjectDir)..\..\..\public\bundles\RCWMigratorApp.zip"
-"C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../../../../public/bundles/RCWMigratorApp.zip" "$(ProjectDir)RCWMigratorApp.bundle\" -xr0!*.pdb
+del /F "$(ProjectDir)..\..\..\wwwroot\bundles\RCWMigratorApp.zip"
+"C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../../../../wwwroot/bundles/RCWMigratorApp.zip" "$(ProjectDir)RCWMigratorApp.bundle\" -xr0!*.pdb
 </PostBuildEvent>
     <AssemblyTitle>RCWMigrator</AssemblyTitle>
     <Company>Autodesk, Inc.</Company>

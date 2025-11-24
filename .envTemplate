@@ -1,0 +1,5 @@
+APS_CLIENT_ID="<client-id>"
+APS_CLIENT_SECRET="<client-secret>"
+APS_CALLBACK_URL="http://localhost:3000/api/auth/callback" # URL your users will be redirected to after logging in with their Autodesk account
+APS_WEBHOOK_URL="http://localhost:3000/callback/designautomation" # URL automation service will call back when worktime completed
+SERVER_SESSION_SECRET="<secret-phrase>" # secret phrase used to encrypt/decrypt server session cookies

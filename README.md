@@ -21,6 +21,38 @@
 
 This sample demonstrates how to migrate Revit Cloud Worksharing (RCW) models from one BIM 360/ACC project to another using Design Automation for Revit API. The application supports migrating RCW models (C4RModel type) to the latest Revit versions (2025, 2026) and can handle individual files or entire folders.
 
+## Key Features
+
+### 🔐 Authentication & Authorization
+- **Three-legged OAuth 2.0** for BIM 360/ACC account access with automatic token refresh
+- **Two-legged OAuth** for Design Automation API calls
+- **BIM 360/ACC Account Provisioning** workflow with step-by-step guidance
+
+### 📁 Data Management
+- **Interactive Tree Browser** for navigating BIM 360/ACC hubs, projects, and folders
+- **Dual-panel Interface** for selecting source files/folders and destination folders
+- **Folder Management** - Create and delete folders directly from the interface
+- **Version Control** - Automatically retrieves and migrates the latest version of RCW models
+
+### 🔄 Migration Capabilities
+- **Batch Folder Migration** - Migrate entire folders containing multiple RCW models (up to 5 files for demo)
+- **Conflict Resolution** - Choose to skip or override existing files in destination
+- **Linked Models Support** - migrating models with Revit links is not supported
+
+### ⚙️ Automation Management
+- **Automatic Configuration** - One-click setup of AppBundles and Activities via Configure button
+- **AppBundle Versioning** - Automatically creates new versions when plugins are updated
+- **Multiple Revit Engines** - Support for Revit 2025 and 2026 engines
+
+### 📊 Real-time Progress Tracking
+- **Socket.IO Integration** - Live updates on workitem status
+- **Progress Dashboard** - Visual feedback showing migration status for each file
+- **Workitem Monitoring** - Query and track individual workitem status
+- **Cancel Operations** - Ability to cancel in-progress workitems
+
+### 🔌 Revit Plugins
+- **RCWMigratorPlugin** - Core plugin for migrating RCW models between projects
+
 # Thumbnail
 ![thumbnail](/thumbnail.png)
 
@@ -98,10 +130,7 @@ The following are optional:
 
 ### Using the app
 
-Open the browser: [http://localhost:3000](http://localhost:3000), there are 2 ways to migrate RCW models: 
-
-1. Select a Revit Cloud Worksharing model in BIM 360/ACC Hub from Source File/Folder, select the Destination Folder, and choose the target Revit version (2025 or 2026). Click `Upgrade` to migrate the RCW model to the destination project.
-2. Select Source Folder containing multiple RCW models and Destination Folder, then click `Upgrade`. It will migrate all RCW models under the source folder to the destination folder.
+Open the browser: [http://localhost:3000](http://localhost:3000), migrate RCW models: Select Source Folder containing multiple RCW models and Destination Folder, then click `Upgrade`. It will migrate all RCW models under the source folder to the destination folder.
 
 `Note`: 
 - Before using the app, you must click the `Configure` button to create the AppBundle & Activity. Please check the video for the steps at [https://youtu.be/1NCeH7acIko](https://youtu.be/1NCeH7acIko)
@@ -150,7 +179,7 @@ After installing Github desktop for Windows, on the Git Shell, if you see a ***e
 - Only supports Revit Cloud Worksharing (RCW) models (C4RModel type) - standard Revit files (RVT, RFA, RTE) are not supported
 - Override functionality is not fully implemented yet
 - Only supports migration between BIM 360/ACC projects
-- Migrating linked Revit models is a work in progress
+- Migrating linked Revit models is not supported
 - Client JavaScript requires modern browser
 
 ## License
