@@ -59,8 +59,8 @@ if (!String.prototype.format) {
 }
 
 function prepareLists() {
-    list('engines', '/api/aps/designautomation/engines');
-    list('localBundles', '/api/aps/appbundles');
+    list('engines', '/designautomation/engines');
+    list('localBundles', '/appbundles');
 }
 
 function list(control, endpoint) {
@@ -82,7 +82,7 @@ async function deleteAppBundle( appBundleName ) {
     let def = $.Deferred();
 
     $.ajax({
-        url: '/api/aps/designautomation/appbundles/' + encodeURIComponent(appBundleName),
+        url: '/designautomation/appbundles/' + encodeURIComponent(appBundleName),
         type: "delete",
         dataType: "json",
         success: function (res) {
@@ -99,7 +99,7 @@ async function deleteActivity( activityName) {
     let def = $.Deferred();
 
     $.ajax({
-        url: '/api/aps/designautomation/activities/' + encodeURIComponent(activityName),
+        url: '/designautomation/activities/' + encodeURIComponent(activityName),
         type: "delete",
         dataType: "json",
         success: function (res) {
@@ -141,7 +141,7 @@ function createAppBundle(fileName) {
     let def = $.Deferred();
 
     jQuery.ajax({
-        url: 'api/aps/designautomation/appbundles',
+        url: '/designautomation/appbundles',
         method: 'POST',
         contentType: 'application/json',
         dataType: 'json',
@@ -163,7 +163,7 @@ function createActivity(fileName) {
     let def = $.Deferred();
 
     jQuery.ajax({
-        url: 'api/aps/designautomation/activities',
+        url: '/designautomation/activities',
         method: 'POST',
         contentType: 'application/json',
         dataType: 'json',

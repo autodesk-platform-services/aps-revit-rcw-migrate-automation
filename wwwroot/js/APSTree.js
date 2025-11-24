@@ -19,7 +19,7 @@
 $(document).ready(function () {
   // first, check if current visitor is signed in
   jQuery.ajax({
-    url: '/api/aps/oauth/v1/token',
+    url: '/api/auth/profile',
     success: function (res) {
       // yes, it is signed in...
       $('#autodeskSignOutButton').show();
@@ -33,7 +33,7 @@ $(document).ready(function () {
       // prepare sign out
       $('#autodeskSignOutButton').click(function () {
         $('#hiddenFrame').on('load', function (event) {
-          location.href = '/api/aps/api/auth/logout';
+          location.href = '/api/auth/logout';
         });
         $('#hiddenFrame').attr('src', 'https://accounts.autodesk.com/Authentication/LogOut');
       })
@@ -58,15 +58,10 @@ $(document).ready(function () {
   });
 
   $('#autodeskSigninButton').click(function () {
-    jQuery.ajax({
-      url: '/api/aps/oauth/v1/url',
-      success: function (url) {
-        location.href = url;
-      }
-    });
+    window.location.replace('/api/auth/login');
   })
 
-  $.getJSON("/api/aps/oauth/v1/clientid", function (res) {
+  $.getJSON("/oauth/v1/clientid", function (res) {
     $("#ClientID").val(res.id);
     $("#provisionAccountSave").click(function () {
       $('#provisionAccountModal').modal('toggle');
@@ -232,7 +227,7 @@ function upgradeFileToFolder(sourceFile, destinateFolder){
   encodeURIComponent()
   
   jQuery.post({
-    url: '/api/aps/da4revit/v1/upgrader/files/'+encodeURIComponent(sourceFile)+'/folders/'+encodeURIComponent(destinateFolder),
+    url: '/da4revit/v1/upgrader/files/'+encodeURIComponent(sourceFile)+'/folders/'+encodeURIComponent(destinateFolder),
     contentType: 'application/json',
     dataType: 'json',
     data: JSON.stringify({ 'sourceFile': sourceFile, 'destinateFolder': destinateFolder }),
@@ -259,7 +254,7 @@ function upgradeFile(node) {
   const fileItemName = node.text;
 
   jQuery.post({
-    url: '/api/aps/da4revit/v1/upgrader/files',
+    url: '/da4revit/v1/upgrader/files',
     contentType: 'application/json',
     dataType:'json',
     data: JSON.stringify({
@@ -282,7 +277,7 @@ function prepareUserHubsTree( userHubs) {
       'themes': { "icons": true },
       'multiple': false,
       'data': {
-        "url": '/api/aps/datamanagement/v1',
+        "url": '/api/hubs',
         "dataType": "json",
         'cache': false,
         'data': function (node) {
@@ -395,7 +390,7 @@ function deleteFolder(node){
   }
 
   $.ajax({
-    url: '/api/aps/datamanagement/v1/folder/' + encodeURIComponent(node.id),
+    url: '/api/hubs/folder/' + encodeURIComponent(node.id),
     type: "delete",
     dataType: "json",
     success: function (res) {
@@ -443,7 +438,7 @@ function createNamedFolder(node, folderName) {
   }
 
   jQuery.post({
-    url: '/api/aps/datamanagement/v1/folder',
+    url: '/api/hubs/folder',
     contentType: 'application/json',
     dataType: 'json',
     data: JSON.stringify({
@@ -471,7 +466,7 @@ function cancelWorkitem( workitemId ){
   }
 
   $.ajax({
-    url: '/api/aps/da4revit/v1/upgrader/files/' + encodeURIComponent(workitemId),
+    url: '/da4revit/v1/upgrader/files/' + encodeURIComponent(workitemId),
     type: "delete",
     dataType: "json",
     success: function (res) {
@@ -494,7 +489,7 @@ function getWorkitemStatus( workitemId ){
   }
 
   jQuery.get({
-    url: '/api/aps/da4revit/v1/upgrader/files/' + encodeURIComponent(workitemId),
+    url: '/da4revit/v1/upgrader/files/' + encodeURIComponent(workitemId),
     dataType: 'json',
     success: function (res) {
       def.resolve(res);
@@ -563,7 +558,7 @@ function addGroupListItem(itemText, statusStr, itemType, itemStyle, itemId) {
 
 function showUser() {
   jQuery.ajax({
-    url: '/api/aps/api/auth/profile',
+    url: '/api/auth/profile',
     success: function (profile) {
       var img = '<img src="' + profile.picture + '" height="20px">';
       $('#userInfo').html(img + profile.name);

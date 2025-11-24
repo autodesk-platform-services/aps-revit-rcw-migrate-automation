@@ -21,6 +21,10 @@
 
 This sample demonstrates how to migrate Revit Cloud Worksharing (RCW) models from one BIM 360/ACC project to another using Design Automation for Revit API. The application supports migrating RCW models (C4RModel type) to the latest Revit versions (2025, 2026) and can handle individual files or entire folders.
 
+
+# Thumbnail
+![thumbnail](/thumbnail.png)
+
 ## Key Features
 
 ### 🔐 Authentication & Authorization
@@ -52,9 +56,6 @@ This sample demonstrates how to migrate Revit Cloud Worksharing (RCW) models fro
 
 ### 🔌 Revit Plugins
 - **RCWMigratorPlugin** - Core plugin for migrating RCW models between projects
-
-# Thumbnail
-![thumbnail](/thumbnail.png)
 
 # Main Parts of The Work
 1. Create a Revit Plugin to be used within AppBundle of Design Automation for Revit. Please check [PlugIn](./RCWMigratorPlugin/) 
@@ -101,9 +102,6 @@ Mac OSX/Linux (Terminal)
     export APS_CLIENT_SECRET=<<YOUR CLIENT SECRET>>
     export APS_CALLBACK_URL=<<YOUR CALLBACK URL>>
     export APS_WEBHOOK_URL=<<YOUR DESIGN AUTOMATION FOR REVIT CALLBACK URL>>
-    export DESIGN_AUTOMATION_NICKNAME=<<YOUR DESIGN AUTOMATION FOR REVIT NICK NAME>>
-    export DESIGN_AUTOMATION_ACTIVITY_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT ACTIVITY NAME>>
-    export DESIGN_AUTOMATION_ACTIVITY_ALIAS=<<YOUR DESIGN AUTOMATION FOR REVIT ACTIVITY ALIAS>>    
     npm start
 
 Windows (use **Node.js command line** from Start menu)
@@ -113,20 +111,17 @@ Windows (use **Node.js command line** from Start menu)
     set APS_CLIENT_SECRET=<<YOUR CLIENT SECRET>>
     set APS_CALLBACK_URL=<<YOUR CALLBACK URL>>
     set APS_WEBHOOK_URL=<<YOUR DESIGN AUTOMATION FOR REVIT CALLBACK URL>>
-    set DESIGN_AUTOMATION_NICKNAME=<<YOUR DESIGN AUTOMATION FOR REVIT NICK NAME>>
-    set DESIGN_AUTOMATION_ACTIVITY_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT ACTIVITY NAME>>
-    set DESIGN_AUTOMATION_ACTIVITY_ALIAS=<<YOUR DESIGN AUTOMATION FOR REVIT ACTIVITY ALIAS>>
     npm start
 
 **Note.**
 environment variable examples:
-- APS_CALLBACK_URL: `http://localhost:3000/api/aps/callback/oauth`
-- APS_WEBHOOK_URL: `http://808efcdc123456.ngrok.io/api/aps/callback/designautomation`
+- APS_CALLBACK_URL: `http://localhost:3000/callback/oauth`
+- APS_WEBHOOK_URL: `http://808efcdc123456.ngrok.io/callback/designautomation`
 
 The following are optional:
-- DESIGN_AUTOMATION_NICKNAME: Only necessary if there is a nickname, APS client id by default.
-- DESIGN_AUTOMATION_ACTIVITY_NAME: Only necessary if the activity name is customized, RCWMigratorAppActivity by default.
-- DESIGN_AUTOMATION_ACTIVITY_ALIAS: Only necessary if the activity alias is customized, dev by default.
+- APS_AUTOMATION_NICKNAME: Only necessary if your APS app has a nickname, otherwise **APS Client ID** will be used by default.
+- APS_AUTOMATION_ACTIVITY_NAME: Only necessary if the activity name is customized, **RCWMigratorAppActivity** will be used by default.
+- APS_AUTOMATION_ALIAS: Only necessary if the activity alias is customized, **dev** by default.
 
 ### Using the app
 
