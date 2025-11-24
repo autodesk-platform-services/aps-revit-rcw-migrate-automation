@@ -1,4 +1,4 @@
-# Migrate Revit Cloud Worksharing Models with Design Automation
+# Migrate Revit Cloud Worksharing Models with Revit Automation
 
 [![Node.js](https://img.shields.io/badge/Node.js-14.0-blue.svg)](https://nodejs.org/)
 [![npm](https://img.shields.io/badge/npm-6.0-blue.svg)](https://www.npmjs.com/)
@@ -25,37 +25,6 @@ This sample demonstrates how to migrate Revit Cloud Worksharing (RCW) models fro
 # Thumbnail
 ![thumbnail](/thumbnail.png)
 
-## Key Features
-
-### 🔐 Authentication & Authorization
-- **Three-legged OAuth 2.0** for BIM 360/ACC account access with automatic token refresh
-- **Two-legged OAuth** for Design Automation API calls
-- **BIM 360/ACC Account Provisioning** workflow with step-by-step guidance
-
-### 📁 Data Management
-- **Interactive Tree Browser** for navigating BIM 360/ACC hubs, projects, and folders
-- **Dual-panel Interface** for selecting source files/folders and destination folders
-- **Folder Management** - Create and delete folders directly from the interface
-- **Version Control** - Automatically retrieves and migrates the latest version of RCW models
-
-### 🔄 Migration Capabilities
-- **Batch Folder Migration** - Migrate entire folders containing multiple RCW models (up to 5 files for demo)
-- **Conflict Resolution** - Choose to skip or override existing files in destination
-- **Linked Models Support** - migrating models with Revit links is not supported
-
-### ⚙️ Automation Management
-- **Automatic Configuration** - One-click setup of AppBundles and Activities via Configure button
-- **AppBundle Versioning** - Automatically creates new versions when plugins are updated
-- **Multiple Revit Engines** - Support for Revit 2025 and 2026 engines
-
-### 📊 Real-time Progress Tracking
-- **Socket.IO Integration** - Live updates on workitem status
-- **Progress Dashboard** - Visual feedback showing migration status for each file
-- **Workitem Monitoring** - Query and track individual workitem status
-- **Cancel Operations** - Ability to cancel in-progress workitems
-
-### 🔌 Revit Plugins
-- **RCWMigratorPlugin** - Core plugin for migrating RCW models between projects
 
 # Main Parts of The Work
 1. Create a Revit Plugin to be used within AppBundle of Design Automation for Revit. Please check [PlugIn](./RCWMigratorPlugin/) 
@@ -171,8 +140,7 @@ After installing Github desktop for Windows, on the Git Shell, if you see a ***e
 ## Limitation
 - For Demo purpose, we only support **5** files to be migrated as maximum
 - Only supports migrating to Revit 2025 or 2026
-- Only supports Revit Cloud Worksharing (RCW) models (C4RModel type) - standard Revit files (RVT, RFA, RTE) are not supported
-- Override functionality is not fully implemented yet
+- Only supports Revit Cloud Worksharing (RCW) models (C4RModel type)
 - Only supports migration between BIM 360/ACC projects
 - Migrating linked Revit models is not supported
 - Client JavaScript requires modern browser
