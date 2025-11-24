@@ -106,11 +106,11 @@ service.getProjects = async (hubId, access_token) => {
     const resp = await dataManagementClient.getHubProjects(hubId, { accessToken: access_token });
     const treeNodes = resp.data.map((project) => {
         let projectType = 'projects';
-        switch (project.attributes.extension.type) {
-            case 'projects:autodesk.core:Project':
-                projectType = 'a360projects';
+        switch (project.attributes.extension.data.projectType) {
+            case 'ACC':
+                projectType = 'accprojects';
                 break;
-            case 'projects:autodesk.bim360:Project':
+            case 'BIM360':
                 projectType = 'bim360projects';
                 break;
         }

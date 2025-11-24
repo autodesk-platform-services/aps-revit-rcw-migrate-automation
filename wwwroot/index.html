@@ -71,7 +71,7 @@
       <div class="col-sm-3 fill">
           <br/>
         <div>
-          <label><h4>Source File/Folder</h4> </label>
+          <label><h4>Source Folder</h4> </label>
         </div>
         <div class="panel panel-default fill">
           <div class="panel-heading" data-toggle="tooltip" style="padding: 0px;">
@@ -90,101 +90,46 @@
       <div class="col-sm-6 fill">
         <div class="row">
             <div style="padding-top: 10px; text-align: center;">
-                <h2>Revit Cloud Worksharing Model Migrator</h2>
+                <h3>Revit Cloud Worksharing Model Migrator</h3>
             </div>
             <br />
           </div>
         <div class="row ">
-          <div style="padding-top: 10px; text-align: center;">
-            <form class="bs-example bs-example-form" role="form">
-              <div class="row">
-                <div class="col-lg-6">
-                    <div style="text-align: left;">
-                        <label>Same File in Destination:</label>
-                  </div>
-                  <div class="input-group">
-                    <span class="input-group-addon">
-                      <input type="radio" name='fileExisted' value='override'>
-                    </span>
-                    <label class="form-control">Override</label>
-                    <!-- <input type="text" class="form-control"> -->
-                  </div><!-- /input-group -->
-                  <div class="input-group">
-                    <span class="input-group-addon">
-                      <input type="radio" name='fileExisted' value='skip' checked>
-                    </span>
-                    <label class="form-control">Skip</label>
-                  </div><!-- /input-group -->
-                </div>
-                <div class="col-lg-6">
-                    <div style="text-align: left;">
-                        <label> Upgrade To: </label>
-                  </div>
-                  <div class="input-group">
-                      <span class="input-group-addon">
-                        <input type="radio" name='upgradeToVersion' value='2023' checked>
-                      </span>
-                      <label class="form-control">Revit 2026</label>
-                    </div><!-- /input-group -->
-                    <div class="input-group">
-                    <span class="input-group-addon">
-                      <input type="radio" name='upgradeToVersion' value='2022' >
-                    </span>
-                    <label class="form-control">Revit 2025</label>
-                  </div><!-- /input-group -->
-                </div>
-
-              </div><!-- /.row -->
-
-              <br />
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="input-group">
-                    <span class="input-group-addon">
-                      <input type="checkbox" id='supportLinks' checked=false>
-                    </span>
-                    <label class="form-control">Including Migrate Link Revit Models(Work in Progress)</label>
-                  </div><!-- /input-group -->
-                </div>
-                  
-                </div>
-                <div class="row" hidden>
-                  <div class="col-lg-4">
-                  <div class="input-group">
-                    <span class="input-group-addon">
-                      <input type="checkbox" id='supportRvtCbx' checked=true>
-                    </span>
-                    <label class="form-control">RVT</label>
-                  </div><!-- /input-group -->
-                </div>
-
-                <div class="col-lg-4">
-                  <div class="input-group">
-                    <span class="input-group-addon">
-                      <input type="checkbox" id='supportRfaCbx' checked=true>
-                    </span>
-                    <label class="form-control">RFA</label>
-                  </div><!-- /input-group -->
-                </div>
-                <div class="col-lg-4">
-                  <div class="input-group">
-                    <span class="input-group-addon">
-                      <input type="checkbox" id='supportRteCbx' checked=true>
-                    </span>
-                    <label class="form-control">RTE</label>
-                  </div><!-- /input-group -->
-                </div>
-              </div><!-- /.row -->
-            </form>
-            <!-- </div> -->
-            <br />
-            <br />
-            <div class="btn-group btn-group-lg">
-              <button class="btn btn-lg btn-default" id="upgradeBtn">
-                <span class="glyphicon glyphicon-play"></span>Upgrade
-              </button>
+          <div id="howToUse" style="padding: 20px 40px; text-align: left;">
+            <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; border: 1px solid #ddd;">
+              <h4 style="margin-top: 0; color: #333;"><span class="glyphicon glyphicon-info-sign"></span> About This Application</h4>
+              
+              <p style="margin-bottom: 15px;">
+                <strong>Purpose:</strong> This application automates the migration of Revit models to Revit Cloud Worksharing (RCW) format, enabling seamless collaboration and cloud-based project management.
+              </p>
+              
+              <p style="margin-bottom: 15px;">
+                <strong>Problem Solved:</strong> Eliminates the manual, time-consuming process of converting legacy Revit files to cloud version RCW format. Supports migration across multiple Revit versions (2024, 2025, 2026) with automated version-specific processing through Autodesk Platform Services Design Automation.
+              </p>
+              
+              <p style="margin-bottom: 10px;"><strong>Setup Activity:</strong></p>
+              <ol style="margin-bottom: 15px; padding-left: 20px;">
+                <li>Open Configure button to create your AppBundle and Activity</li>
+                <li>Click delete button to delete the existing AppBundle and Activity</li>
+                <li>Select the appbundle and Revit version(2024, 2025 or 2026), Click Create/Update button to create the AppBundle and Activity</li>
+              </ol>
+              <p style="margin-bottom: 10px;"><strong>How to Migrate:</strong></p>
+              <ol style="margin-bottom: 15px; padding-left: 20px;">
+                <li>Select source folder from the left panel</li>
+                <li>Select destination folder from the right panel</li>
+                <li>Click Upgrade to start RCW migration</li>
+              </ol>
+              
+              <div style="background-color: #fcf8e3; padding: 10px; border-radius: 3px; border-left: 4px solid #f0ad4e; margin-bottom: 15px;">
+                <strong>Important:</strong> Ensure that destination project is compatible with the selected Revit version
+              </div>
+              
+              <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-lg btn-success" id="upgradeBtn">
+                  <span class="glyphicon glyphicon-play"></span> Upgrade
+                </button>
+              </div>
             </div>
-            <br />
           </div>
         </div>
 

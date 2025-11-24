@@ -87,14 +87,6 @@ $(document).ready(function () {
       return;
     }
 
-    // TBD: use the current selection of version & action
-    bUpgrade2023 =  $('input[name="upgradeToVersion"]:checked').val() === '2023';
-    bIgnore      =  $('input[name="fileExisted"]:checked').val() === 'skip';
-
-    bSupportRvt = $('#supportRvtCbx')[0].checked;
-    bSupportRfa = $('#supportRfaCbx')[0].checked;
-    bSupportRte = $('#supportRteCbx')[0].checked;
-
     // remove items if any.
     let logList = document.getElementById('logStatus');
     let index = logList.childElementCount;
@@ -113,12 +105,6 @@ $(document).ready(function () {
     document.getElementById('upgradeTitle').innerHTML ="<h4>Creating versions in BIM360(Limitation: 5 Files Maximun)...</h4>";
   });
 });
-
-var bSupportRvt = true;
-var bSupportRfa = true;
-var bSupportRte = true;
-var bIgnore     = true;
-var bUpgrade2023= true;
 
 const FileLimitation = 5;
 var fileNumber = 0;
@@ -194,11 +180,6 @@ async function upgradeFolder(sourceNode, destinationNode) {
         }
       }
       if (node.type === 'items') {
-        const fileParts     = node.text.split('.');
-        const fileExtension = fileParts[fileParts.length-1].toLowerCase();
-        if ((bSupportRvt && fileExtension === 'rvt') ||
-          (bSupportRfa && fileExtension === 'rfa') ||
-          (bSupportRte && fileExtension === 'rte')) {
           if (fileNumber++ >= FileLimitation) {
             return;
           }
@@ -209,7 +190,6 @@ async function upgradeFolder(sourceNode, destinationNode) {
           } catch (err) {
             addGroupListItem(node.text, 'failed', ItemType.FILE, 'list-group-item-danger');
           }
-        }
       }
     }
   
@@ -288,59 +268,21 @@ function prepareUserHubsTree( userHubs) {
     'types': {
       'default': {'icon': 'glyphicon glyphicon-question-sign'},
       '#': {'icon': 'glyphicon glyphicon-user'},
-      'hubs': { 'icon': 'https://cdn.autodesk.io/dm/xs/a360hub.png' },
-      'personalHub': { 'icon': 'https://cdn.autodesk.io/dm/xs/a360hub.png' },
-      'bim360Hubs': { 'icon': 'https://cdn.autodesk.io/dm/xs/bim360hub.png' },
-      'bim360projects': { 'icon': 'https://cdn.autodesk.io/dm/xs/bim360project.png' },
-      'a360projects': { 'icon': 'https://cdn.autodesk.io/dm/xs/a360project.png' },
+      'bim360Hubs': { 'icon': '../res/acc.svg' },
+      'bim360projects': { 'icon': 'https://cdn.autodesk.io/dm/xs/bim360hub.png' },
+      'accprojects': { 'icon': '../res/acc.svg' },
       'items': { 'icon': 'glyphicon glyphicon-file'},
       'folders': {'icon': 'glyphicon glyphicon-folder-open' },
       'versions': { 'icon': 'glyphicon glyphicon-time' },
       'unsupported': {'icon': 'glyphicon glyphicon-ban-circle'}
     },
     "plugins": ["types", "state", "sort", "contextmenu"],
-    contextmenu: { items: (userHubs === '#sourceHubs'? autodeskCustomMenuSource: autodeskCustomMenuDestination)},
+    contextmenu: { items: (userHubs === '#sourceHubs'? null: autodeskCustomMenuDestination)},
     "state": { "key": userHubs }// key restore tree state
   }).bind("activate_node.jstree", function (evt, data) {
   });
 }
 
-
-function autodeskCustomMenuSource(autodeskNode) {
-  var items;
-
-  switch (autodeskNode.type) {
-    case "items":
-      items = {
-        upgradeFile: {
-          label: "Upgrade to Revit 2023",
-          action: async function () {
-            try{
-              let logList = document.getElementById('logStatus');
-              let index   = logList.childElementCount;
-              while(index > 0){
-                logList.removeChild(logList.firstElementChild);
-                index--;
-              }
-
-              document.getElementById('upgradeTitle').innerHTML ="<h4>Start upgrading Revit files...</h4>";
-              let upgradeInfo = await upgradeFile(autodeskNode);
-              sourceNode = autodeskNode;
-              workitemList.push(upgradeInfo.workItemId);
-              document.getElementById('upgradeTitle').innerHTML ="<h4>Creating versions in BIM360...</h4>";
-              addGroupListItem(autodeskNode.text, upgradeInfo.workItemStatus, ItemType.FILE, 'list-group-item-info', upgradeInfo.workItemId  );    
-            }catch(err){
-              addGroupListItem(autodeskNode.text, 'Failed', ItemType.FILE, 'list-group-item-danger' );
-            }
-        },
-          icon: 'glyphicon glyphicon-transfer'
-        }
-      };
-      break;
-  }
-
-  return items;
-}
 
 
 function autodeskCustomMenuDestination(autodeskNode) {
