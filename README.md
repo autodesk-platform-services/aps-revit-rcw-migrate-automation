@@ -22,8 +22,12 @@
 This sample demonstrates how to migrate Revit Cloud Worksharing (RCW) models from one BIM 360/ACC project to another using Design Automation for Revit API. The application supports migrating RCW models (C4RModel type) to the latest Revit versions (2025, 2026) and can handle individual files or entire folders.
 
 
-# Thumbnail
-![thumbnail](/thumbnail.png)
+# Live Demo
+[https://rcw-migrator.autodesk.io/](https://rcw-migrator.autodesk.io/)
+
+Watch the following video:
+[![https://youtu.be/02m8CB60npA](/thumbnail.png)](https://youtu.be/02m8CB60npA "Revit Cloud Worksharing Models Migrator")
+
 
 
 # Main Parts of The Work
